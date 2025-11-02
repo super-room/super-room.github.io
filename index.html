@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Super Room</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0b0b0b;
+        --text: #ffffff;
+        --muted: rgba(255, 255, 255, 0.8);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+          "Segoe UI Emoji";
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .hero {
+        position: relative;
+        min-height: 100svh;
+        overflow: hidden;
+        display: grid;
+        place-items: stretch;
+        isolation: isolate; /* ensure overlay blends only with video */
+      }
+
+      .hero video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* Darken the video to improve text contrast */
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.45) 0%,
+          rgba(0, 0, 0, 0.65) 50%,
+          rgba(0, 0, 0, 0.85) 100%
+        );
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        gap: clamp(12px, 2vw, 20px);
+        padding: clamp(16px, 4vw, 48px);
+        height: min(100svh, 100vh);
+        max-width: 1200px;
+      }
+
+      .title {
+        margin: 0;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+        font-size: clamp(42px, 8vw, 96px);
+        text-shadow: 0 8px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      .subtitle {
+        margin: 0;
+        font-size: clamp(16px, 2.6vw, 22px);
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .authors {
+        margin: 0;
+        font-size: clamp(12px, 2.2vw, 16px);
+        color: var(--muted);
+      }
+
+      /* Improve mobile readability */
+      @media (max-width: 640px) {
+        .hero-content {
+          align-items: flex-start;
+        }
+      }
+
+      /* Phase 2: Variation section */
+      .section {
+        padding: clamp(48px, 10vw, 140px) clamp(16px, 4vw, 48px);
+      }
+
+      .section.light {
+        background: #ffffff;
+        color: #0b0b0b;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Optional wider container for sections that need it */
+      .container-1250 {
+        max-width: 1250px;
+      }
+
+      .section-title {
+        margin: 0 0 clamp(20px, 3vw, 32px) 0;
+        font-size: clamp(28px, 5vw, 44px);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .section-intro {
+        max-width: min(72ch, 1250px);
+        margin: 0 auto clamp(24px, 5vw, 48px);
+      }
+
+      .section-intro p {
+        margin: 0 0 12px 0;
+        font-size: clamp(16px, 2.4vw, 20px);
+        line-height: 1.6;
+        color: #222222;
+      }
+
+      .island-wrap {
+        display: grid;
+        place-items: center;
+      }
+
+      .island {
+        position: relative;
+        width: min(100%, 1100px);
+        transform-style: preserve-3d;
+        animation: floatY 9s ease-in-out infinite;
+      }
+
+      .island img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 16px;
+        box-shadow: 0 40px 120px rgba(0, 0, 0, 0.5),
+          0 24px 48px rgba(0, 0, 0, 0.45);
+        will-change: transform;
+        background: #fff; /* ensures white edges on transparent PNGs */
+      }
+
+      /* Ground shadow for the floating island */
+      .island::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -28px;
+        transform: translateX(-50%);
+        width: 76%;
+        height: 26%;
+        background: radial-gradient(
+          ellipse at center,
+          rgba(0, 0, 0, 0.7),
+          rgba(0, 0, 0, 0) 60%
+        );
+        filter: blur(22px);
+        opacity: 0.9;
+        z-index: -1;
+      }
+
+      /* Subtle rim light to sell the 3D look */
+      .island::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 16px;
+        pointer-events: none;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.08),
+          rgba(255, 255, 255, 0)
+        );
+        mix-blend-mode: screen;
+      }
+
+      @keyframes floatY {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .island:hover {
+        animation-play-state: paused;
+        transform: translateY(-6px);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .island {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section id="opening" class="hero" aria-label="Opening hero section">
+        <video
+          src="out_30fps.mp4"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          poster="prototype.png"
+          aria-hidden="true"
+        ></video>
+
+        <div class="hero-content" role="group" aria-label="Hero text">
+          <h1 class="title">Super Room</h1>
+          <p class="subtitle">Generate thousands of rooms in a single prompt</p>
+          <p class="authors">
+            Mikul Rai, Francis Engelmann, Ian Huang, Elisabetta Fedele, Leonidas
+            Guibas
+          </p>
+        </div>
+      </section>
+
+      <section
+        id="variation"
+        class="section light"
+        aria-label="Variation section"
+      >
+        <div class="container container-1250">
+          <div class="section-intro" aria-label="Variation description">
+            <p>
+              Designing realistic and controllable rooms from prompts remains a
+              challenge, as current approaches either sacrifice geometric
+              fidelity or lack fine-grained controllability.
+            </p>
+            <p>
+              We address this by generating variations of existing rooms that
+              preserve object positions and size while allowing within-category
+              shape variation and texture changes.
+            </p>
+          </div>
+          <div class="island-wrap">
+            <figure class="island">
+              <img
+                src="variation.png"
+                alt="Variation overview with input room and multiple output styles"
+                loading="lazy"
+                width="2200"
+                height="1200"
+              />
+            </figure>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <noscript>
+      <!-- Static fallback for environments without JS/video autoplay -->
+      <style>
+        .hero video {
+          display: none;
+        }
+        .hero {
+          background: url("prototype.png") center / cover no-repeat;
+        }
+      </style>
+    </noscript>
+  </body>
+</html>
