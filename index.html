@@ -10,6 +10,10 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
     <style>
       :root {
         --bg: #0b0b0b;
@@ -109,6 +113,9 @@
       .section {
         padding: clamp(48px, 10vw, 140px) clamp(16px, 4vw, 48px);
       }
+      #variation {
+        padding-top: 20px;
+      }
 
       .section.light {
         background: #ffffff;
@@ -144,9 +151,49 @@
         color: #222222;
       }
 
+      /* Reduce top gap before the Background section */
+      #background {
+        padding-top: clamp(12px, 2.5vw, 28px);
+      }
+
+      /* Spacing tune for the Background section */
+      #background .section-title {
+        margin-bottom: clamp(24px, 4vw, 56px);
+      }
+
+      #background .section-intro {
+        margin: 0 auto clamp(24px, 4vw, 56px);
+      }
+
+      /* Ensure space between heading and first island */
+      #background .island-wrap {
+        margin-top: clamp(12px, 2.5vw, 32px);
+      }
+
+      #background .section-intro p {
+        margin: 0 0 6px 0;
+      }
+
+      #background .section-intro p:last-child {
+        margin-bottom: 0;
+      }
+      #method {
+        padding-bottom: clamp(12px, 2.5vw, 28px);
+      }
+      #gui-walkthrough {
+        padding-top: clamp(12px, 2.5vw, 28px);
+      }
+
       .island-wrap {
         display: grid;
         place-items: center;
+      }
+
+      /* Utility to stack multiple floating islands with consistent spacing */
+      .island-stack {
+        display: grid;
+        place-items: center;
+        gap: clamp(24px, 4vw, 64px);
       }
 
       .island {
@@ -154,22 +201,26 @@
         width: min(100%, 1100px);
         transform-style: preserve-3d;
         animation: floatY 9s ease-in-out infinite;
+        display: grid;
+        place-items: center;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 35px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        padding: clamp(8px, 2vw, 24px);
       }
 
       .island img {
         display: block;
         width: 100%;
         height: auto;
-        border-radius: 16px;
-        box-shadow: 0 40px 120px rgba(0, 0, 0, 0.5),
-          0 24px 48px rgba(0, 0, 0, 0.45);
+        margin: 0;
         will-change: transform;
-        background: #fff; /* ensures white edges on transparent PNGs */
       }
 
       /* Ground shadow for the floating island */
       .island::before {
-        content: "";
+        content: none;
         position: absolute;
         left: 50%;
         bottom: -28px;
@@ -221,19 +272,197 @@
           animation: none;
         }
       }
+      .island-dark {
+        background: #111010;
+        box-shadow: 0 0px 35px 15px rgba(68, 0, 240, 0.1);
+        border: 1px solid rgba(146, 146, 146, 0.3);
+        color: #fff;
+        display: block;
+      }
+      .island-dark,
+      .island-dark * {
+        font-family: Roboto, Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      }
+      .island-title {
+        margin: 0 0 12px 0;
+        text-align: center;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        font-size: clamp(28px, 5vw, 44px);
+      }
+      .island-body {
+        max-width: 1100px;
+        margin: 12px auto 0;
+        padding: 0 30px;
+      }
+      .island-body p {
+        margin: 0 0 12px 0;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: clamp(16px, 2.4vw, 20px);
+        line-height: 1.6;
+      }
+      .hscroll {
+        display: flex;
+        gap: 24px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+      }
+      .hscroll > .island {
+        flex: 0 0 auto;
+        width: min(100%, 1100px);
+      }
+      .snap {
+        scroll-snap-align: center;
+      }
+      #results .container,
+      #results .container-1250 {
+        max-width: 100%;
+      }
+      #results.section {
+        padding-left: 0;
+        padding-right: 0;
+        padding-top: 80px;
+      }
+      #results .section-title {
+        padding-left: 50px;
+        padding-right: 50px;
+      }
+      /* Top floating section bar */
+      #topbar {
+        position: fixed;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 24px;
+        background: rgba(0, 0, 0, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 8px 10px;
+        border-radius: 999px;
+        z-index: 9999;
+        backdrop-filter: saturate(140%) blur(8px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+      #topbar.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      #topbar a {
+        color: #fff;
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 14px;
+        opacity: 0.75;
+      }
+      #topbar a.active {
+        background: #2b2b2b;
+        opacity: 1;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      /* Before/after slider */
+      .bal-container {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16/9;
+        overflow: hidden;
+        background: #000;
+        --pos: 50%;
+      }
+      .bal-after,
+      .bal-before {
+        position: absolute;
+        inset: 0;
+      }
+      .bal-before {
+        width: 100%;
+        overflow: hidden;
+        -webkit-clip-path: polygon(
+          0 0,
+          var(--pos, 50%) 0,
+          var(--pos, 50%) 100%,
+          0 100%
+        );
+        clip-path: polygon(
+          0 0,
+          var(--pos, 50%) 0,
+          var(--pos, 50%) 100%,
+          0 100%
+        );
+      }
+      .bal-before-inset,
+      .bal-after video,
+      .bal-before-inset video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .bal-handle {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 2px;
+        background: rgba(255, 255, 255, 0.7);
+        cursor: ew-resize;
+      }
+      .bal-handle:before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.4);
+        border: 2px solid #fff;
+      }
+      .bal-handle .handle-left-arrow,
+      .bal-handle .handle-right-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border: 6px solid transparent;
+      }
+      .bal-handle .handle-left-arrow {
+        left: calc(50% - 16px);
+        border-right-color: #fff;
+      }
+      .bal-handle .handle-right-arrow {
+        right: calc(50% - 16px);
+        border-left-color: #fff;
+      }
     </style>
   </head>
   <body>
+    <nav id="topbar" aria-label="In-page section navigation">
+      <a href="#background">Background</a><a href="#results">Results</a
+      ><a href="#method">Method</a><a href="#perspectives">Conclusion</a>
+    </nav>
     <main>
       <section id="opening" class="hero" aria-label="Opening hero section">
         <video
-          src="out_30fps.mp4"
+          src="media/out_30fps.mp4"
           autoplay
           muted
           loop
           playsinline
           preload="auto"
-          poster="prototype.png"
+          poster="media/prototype.png"
           aria-hidden="true"
         ></video>
 
@@ -246,29 +475,73 @@
           </p>
         </div>
       </section>
-
       <section
         id="variation"
         class="section light"
         aria-label="Variation section"
       >
         <div class="container container-1250">
+          <span class="link-block" style="display: block; text-align: center"
+            ><a
+              href="https://github.com/themikulrai/SuperRoom"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: #111;
+                color: #fff;
+                padding: 8px 12px;
+                border-radius: 999px;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 14px;
+                margin: 0 0 24px 0;
+              "
+              ><svg
+                aria-hidden="true"
+                viewBox="0 0 16 16"
+                width="16"
+                height="16"
+                fill="currentColor"
+                style="display: block"
+              >
+                <path
+                  d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49 0 0-2.01.37-2.43-.86 0 0-.36-.91-.88-1.15 0 0-.72-.49.05-.48 0 0 .78.06 1.19.8 0 0 .69 1.19 1.84.85 0 0 .07-.54.35-.86-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.27.23.43.66.43 1.32 0 .95-.01 1.71-.01 1.94 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+                ></path></svg
+              ><span>Code</span></a
+            ></span
+          >
           <div class="section-intro" aria-label="Variation description">
             <p>
-              Designing realistic and controllable rooms from prompts remains a
-              challenge, as current approaches either sacrifice geometric
-              fidelity or lack fine-grained controllability.
+              Designing realistic, editable 3D rooms from text remains difficult
+              when the layout and object identities must stay fixed. SuperRoom
+              generates digital cousins of an existing scene: stylistic and
+              geometric variations that preserve object positions and scales
+              while adapting shapes and materials to match a target prompt
+              (e.g., “modern kitchen”).
             </p>
             <p>
-              We address this by generating variations of existing rooms that
-              preserve object positions and size while allowing within-category
-              shape variation and texture changes.
+              Our key idea is to represent the input scene with a superquadric
+              proxy, parametric primitives that capture object extents and
+              poses—then perform text-conditioned retargeting of object
+              appearance (materials, textures) and intra-class shape (e.g., a
+              different chair) under hard constraints from the proxy. This
+              decouples what must not change (layout, affordances, spatial
+              feasibility) from what should change (style and within-class
+              geometry), yielding structure-preserving but visually diverse
+              rooms.
+            </p>
+            <p>
+              We release code, interface, and evaluation protocols for layout
+              preservation, affordance retention, and edit consistency.
             </p>
           </div>
           <div class="island-wrap">
             <figure class="island">
               <img
-                src="variation.png"
+                src="media/variation.png"
                 alt="Variation overview with input room and multiple output styles"
                 loading="lazy"
                 width="2200"
@@ -278,7 +551,507 @@
           </div>
         </div>
       </section>
+
+      <section
+        id="background"
+        class="section light"
+        aria-label="Background: Superquadrics and Supergen"
+      >
+        <div class="container container-1250">
+          <h2 class="section-title">
+            Background: Superquadrics and SpaceControl
+          </h2>
+          <div class="island-wrap island-stack">
+            <figure class="island">
+              <img
+                src="media/supergen.png"
+                alt="Structure and appearance generation overview"
+                loading="lazy"
+              />
+            </figure>
+
+            <div class="section-intro" aria-label="Background description">
+              <p>
+                SpaceControl is training-free and test-time method that enables
+                spatially controlled 3D asset generation using simple geometric
+                primitives such as superquadrics. This method leverages
+                Microsoft's TRELLIS framework which allows the diffusion process
+                to be guided without additional training. SpaceControl was ideal
+                for this task as it allows structurally faithful and
+                semantically consistent objects.
+              </p>
+              <p>
+                The τ (tau) factor regulates the trade-off between realism and
+                faithfulness by determining the diffusion step applied to the
+                initial superquadric representation. Increasing τ introduces
+                more noise into the latent representation, producing visually
+                realistic but less constrained outputs, while lower τ preserves
+                geometric accuracy. The rectified flow forward equation is then
+                used to denoise these latents, yielding high-quality 3D
+                structures aligned with text, image, or spatial input cues.
+              </p>
+            </div>
+            <figure class="island">
+              <img
+                src="media/superquadric_complete.png"
+                alt="Superquadric parameterization and coordinate frames"
+                loading="lazy"
+              />
+            </figure>
+
+            <div class="section-intro" aria-label="Background description">
+              <p>
+                Complex 3D objects can be decomposed into simple geometric
+                primitives such as superquadrics. These are a parametric family
+                of surfaces that can describe cubes, cylinders, spheres,
+                ellipsoids etc in a single continuous parameter space.
+              </p>
+              <p>
+                Representing a complex object like a chair with superquadrics
+                allows us to represent its shape and apppearance using just 66
+                parameters instead of thousands typically required for dense
+                meshes or point clouds.
+              </p>
+            </div>
+            <figure class="island" style="width: 50%">
+              <img
+                src="media/parameters.png"
+                alt="List of superquadric parameters"
+                loading="lazy"
+              />
+            </figure>
+
+            <div class="section-intro" aria-label="Background description">
+              <p>
+                Superquadrics are fully described using 11 parameters: 3 for the
+                position, 3 for the rotation, 3 for the size and 2 for the
+                shape.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="results" class="section" aria-label="Results">
+        <div class="container container-1250">
+          <h2 class="section-title" style="margin-top: -16px">Results</h2>
+          <div class="hscroll" aria-label="Results carousel">
+            <figure class="island island-dark snap">
+              <h3 class="island-title">Multi Scene Generation</h3>
+              <img
+                src="media/multi.png"
+                alt="Multi scene generation examples"
+                loading="lazy"
+              />
+              <div class="island-body">
+                <p>
+                  A diverse set of controlled rooms can be generated by varying
+                  the superquadric base or the prompt. Each row shows a
+                  different prompt being used across multiple room geometries
+                  and each column shows different prompt being used across the
+                  same room geometry.
+                </p>
+                <p>
+                  <span style="display: block; text-align: center">
+                    No. of Scenes = (No. of rooms) × (No. of seeds) × (No. of
+                    prompts).
+                  </span>
+                </p>
+                <p>
+                  By combining spatially distinct superquadric configurations
+                  with prompt-level variation, the system can produce a number
+                  of scenes that remain semantically aligned yet visually
+                  diverse:
+                </p>
+              </div>
+            </figure>
+            <figure class="island island-dark snap">
+              <h3 class="island-title">Controllable Scene Generation</h3>
+              <video
+                src="media/controllability.mov"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+                style="
+                  width: 70%;
+                  height: auto;
+                  display: block;
+                  margin: 0 auto;
+                  padding: 10px 0;
+                "
+              ></video>
+              <div class="island-body">
+                <p>
+                  This highlights our method’s ability to generate consistent
+                  yet editable indoor scenes. Current state of the art methods
+                  for scene generation lack ability to create controllable
+                  consistent rooms. After generating the base scene, elements
+                  such as the sofa and rug can be selectively repositioned and
+                  resized while maintaining overall scene coherence.
+                </p>
+                <p>
+                  Unlike most diffusion based scene generators, SpaceControl
+                  produces deterministic outputs which makes it perfect for this
+                  task allowing fine-grained control.
+                </p>
+              </div>
+            </figure>
+            <figure class="island island-dark snap">
+              <h3 class="island-title">Variable Scene Generation</h3>
+              <img
+                src="media/variability.png"
+                alt="Variable scene generation examples"
+                loading="lazy"
+                style="
+                  width: 84%;
+                  height: auto;
+                  display: block;
+                  margin: 0 auto;
+                  padding: 0px 0;
+                "
+              />
+              <div class="island-body">
+                <p>
+                  Using the same superquadric base and identical text prompts,
+                  our method generates diverse room layouts simply by varying
+                  the seed. Each output maintains structural coherence while
+                  exhibiting distinct textures, furnishings, and stylistic
+                  variations. This demonstrates the model’s ability to balance
+                  geometric consistency with creative diversity—producing
+                  multiple plausible interpretations of a single scene
+                  specification. Such variability enables designers to
+                  efficiently explore alternative design options within a
+                  consistent spatial framework.
+                </p>
+              </div>
+            </figure>
+          </div>
+        </div>
+        <div class="island-wrap" style="margin-top: 100px">
+          <figure class="island island-dark">
+            <h3 class="island-title">Visualiser</h3>
+            <div class="bal-container">
+              <div class="bal-after">
+                <video
+                  src="media/001.mp4"
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                  preload="auto"
+                ></video>
+              </div>
+              <div class="bal-before">
+                <div class="bal-before-inset">
+                  <video
+                    src="media/002.mp4"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                    preload="auto"
+                  ></video>
+                </div>
+              </div>
+              <div class="bal-handle">
+                <span class="handle-left-arrow"></span
+                ><span class="handle-right-arrow"></span>
+              </div>
+            </div>
+          </figure>
+        </div>
+      </section>
+      <section id="method" class="section light" aria-label="Method">
+        <div class="container container-1250">
+          <h2 class="section-title">Method</h2>
+          <div class="island-wrap island-stack">
+            <figure class="island">
+              <h3 class="island-title">Generation Pipeline</h3>
+              <img
+                src="media/generation.png"
+                alt="Generation pipeline overview"
+                loading="lazy"
+              />
+            </figure>
+            <div class="section-intro" aria-label="Method description">
+              <p>
+                Our pipeline combines several algorithmic stages and targeted
+                engineering choices to improve scalability and realism. Each
+                scene begins with a superquadric room envelope plus a text
+                prompt, and the system can batch through a CSV to process many
+                prompts and rooms.
+              </p>
+              <p>
+                Generation iterates over each scene objects, replacing each
+                proxy with the generated object. The workflow parallelizes
+                across multiple GPUs to create many rooms at once while allowing
+                per-room modifications. It also runs headless for unattended
+                overnight or remote execution.
+              </p>
+            </div>
+            <figure class="island">
+              <h3 class="island-title">Envelope Preprocessing</h3>
+              <img
+                src="media/envelope.png"
+                alt="Envelope preprocessing steps"
+                loading="lazy"
+              />
+            </figure>
+            <div class="section-intro" aria-label="Method description">
+              <p>
+                3D scans often miss exterior wall surfaces when objects occlude
+                them, leaving holes in the room envelope (walls, roof, floor).
+                Diffusion can’t fix broken geometry, so we first make the
+                envelope watertight.
+              </p>
+              <p>
+                We start from the roof, which is usually the most complete
+                surface. Using RANSAC, we fit a plane, project points to an
+                orthonormal basis, rasterize to a bitmap, splat to close small
+                gaps, and apply binary hole-fill to obtain a watertight 2D mask.
+                We then mesh the mask (ear-clipping), lift it back to 3D, and
+                clean it to get a hole-free roof.
+              </p>
+              <p>
+                Next, we clone the roof to the floor and connect corresponding
+                boundary edges with triangle-strip extrusion to form the walls.
+                Finally, we have a closed, watertight envelope with no openings.
+              </p>
+            </div>
+            <figure class="island">
+              <h3 class="island-title">Prototype Generation</h3>
+              <img
+                src="media/prototype.png"
+                alt="Prototype generation pipeline"
+                loading="lazy"
+              />
+            </figure>
+            <div class="section-intro" aria-label="Method description">
+              <p>
+                This stage is an engineering choice that boosts quality and
+                consistency. We observed that object shape is largely determined
+                by category/text, not by the image prompt, so we generate
+                geometry first and texture second.
+              </p>
+              <p>
+                Prototype generation proceeds as follows: use the text prompt to
+                generate the object’s shape (SpaceControl), render a few
+                multi-views, then condition the image generator on text +
+                renders. This aligns the generated textures and details to the
+                actual geometry, producing cleaner, better-mapped results and an
+                output CSV linking each object to its images.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        id="gui-walkthrough"
+        class="section light"
+        aria-label="GUI Walkthrough"
+      >
+        <div class="container container-1250">
+          <h2 class="section-title">GUI Walkthrough</h2>
+          <div class="island-wrap island-stack">
+            <figure class="island">
+              <video
+                src="media/GUI_walkthrough.mp4"
+                controls
+                playsinline
+                preload="auto"
+                style="display: block; width: 100%; height: auto; margin: 0"
+              ></video>
+            </figure>
+            <div class="section-intro" aria-label="GUI Walkthrough description">
+              <p>
+                The GUI walkthrough presents the SuperRoom interface. Enter a
+                text or image prompt and the app generates a room from it. You
+                can adjust lighting, move objects before or after generation,
+                and edit each object’s shape and size. These tools work for any
+                room in the datasets, and you can create new datasets by adding
+                or replacing objects. After generation, a results visualizer
+                lets you inspect the outputs.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        id="perspectives"
+        class="section"
+        aria-label="Perspectives and next steps"
+      >
+        <div class="container">
+          <div style="max-width: min(72ch, 1250px); margin: 0 auto">
+            <h2 class="section-title">Perspectives and next steps</h2>
+            <p
+              style="
+                max-width: min(72ch, 1250px);
+                margin: 0 0 12px 0;
+                font-size: clamp(16px, 2.4vw, 20px);
+                line-height: 1.6;
+                color: rgba(255, 255, 255, 0.9);
+              "
+            >
+              I undertook this project with the Geometric Computation Group,
+              focusing on Computational Geometry and Artificial Intelligence
+              research. I was mentored by postdoc Francis Engelmann and PhD
+              researchers Ian Huang and Elisabetta Fedele. Through this project,
+              I gained a broad range of experience—from understanding formal
+              graphics research terminology to implementing complex algorithms
+              and presenting research both within the lab and to the public.
+            </p>
+
+            <p
+              style="
+                max-width: min(72ch, 1250px);
+                margin: 0 0 12px 0;
+                font-size: clamp(16px, 2.4vw, 20px);
+                line-height: 1.6;
+                color: rgba(255, 255, 255, 0.9);
+              "
+            >
+              One of the biggest challenges I encountered was balancing deep
+              theoretical understanding with practical implementation. It’s easy
+              to get absorbed in learning a topic thoroughly, but research
+              deadlines often demand forward progress even when your
+              understanding feels incomplete. Over time, I learned that real
+              insight often comes from alternating between exploration and
+              execution.
+            </p>
+
+            <p
+              style="
+                max-width: min(72ch, 1250px);
+                margin: 0;
+                font-size: clamp(16px, 2.4vw, 20px);
+                line-height: 1.6;
+                color: rgba(255, 255, 255, 0.9);
+              "
+            >
+              Looking ahead, I aim to extend this work towards a more
+              mathematical perspective by building interpretable systems that
+              help robots perceive and reason about three-dimensional
+              environments. This remains a fundamental unsolved problem, perhaps
+              best approached by mimicking how humans interpret complex
+              structures through simple primitives. It’s a question I care
+              deeply about, and one I intend to keep pursuing in future
+              research.
+            </p>
+          </div>
+        </div>
+      </section>
     </main>
+    <script>
+      (function () {
+        var bar = document.getElementById("topbar"),
+          opening = document.getElementById("opening");
+        if (!bar || !opening) return;
+        new IntersectionObserver(
+          function (e) {
+            bar.classList.toggle("show", !e[0].isIntersecting);
+          },
+          { threshold: 0.01 }
+        ).observe(opening);
+        var ids = ["background", "results", "method", "perspectives"],
+          links = {},
+          secs = [];
+        ids.forEach(function (id) {
+          links[id] = bar.querySelector('a[href="#' + id + '"]');
+          var s = document.getElementById(id);
+          if (s) secs.push(s);
+        });
+        function up() {
+          var cut = innerHeight * 0.35,
+            b = null,
+            t = -1 / 0,
+            sh = Math.max(
+              document.body.scrollHeight,
+              document.documentElement.scrollHeight
+            ),
+            nearBottom = scrollY + innerHeight >= sh - 2;
+          for (var i = 0; i < secs.length; i++) {
+            var r = secs[i].getBoundingClientRect();
+            if (r.top <= cut && r.top > t) {
+              t = r.top;
+              b = secs[i];
+            }
+          }
+          if (nearBottom) b = secs[secs.length - 1];
+          if (!b) b = secs[0];
+          ids.forEach(function (id) {
+            if (links[id])
+              links[id].classList.toggle("active", b && b.id === id);
+          });
+        }
+        addEventListener(
+          "scroll",
+          function () {
+            requestAnimationFrame(up);
+          },
+          { passive: true }
+        );
+        addEventListener("resize", function () {
+          requestAnimationFrame(up);
+        });
+        up();
+      })();
+    </script>
+    <script>
+      (function () {
+        function init(c) {
+          var before = c.querySelector(".bal-before"),
+            handle = c.querySelector(".bal-handle");
+          if (!before || !handle) return;
+          function clamp(n) {
+            return Math.max(0, Math.min(1, n));
+          }
+          function set(p) {
+            p = clamp(p);
+            var w = p * 100 + "%";
+            c.style.setProperty("--pos", w);
+            handle.style.left = w;
+          }
+          function pos(e) {
+            var x = e.touches ? e.touches[0].clientX : e.clientX,
+              r = c.getBoundingClientRect();
+            return (x - r.left) / r.width;
+          }
+          var dragging = false;
+          function move(e) {
+            if (!dragging) return;
+            set(pos(e));
+            if (e.cancelable) e.preventDefault();
+          }
+          handle.addEventListener("mousedown", function (e) {
+            dragging = true;
+            move(e);
+          });
+          handle.addEventListener(
+            "touchstart",
+            function (e) {
+              dragging = true;
+              move(e);
+            },
+            { passive: false }
+          );
+          window.addEventListener("mousemove", move, { passive: false });
+          window.addEventListener("touchmove", move, { passive: false });
+          window.addEventListener("mouseup", function () {
+            dragging = false;
+          });
+          window.addEventListener("touchend", function () {
+            dragging = false;
+          });
+          c.addEventListener("click", function (e) {
+            set(pos(e));
+          });
+          set(0.5);
+        }
+        document.querySelectorAll(".bal-container").forEach(init);
+      })();
+    </script>
 
     <noscript>
       <!-- Static fallback for environments without JS/video autoplay -->
@@ -287,7 +1060,7 @@
           display: none;
         }
         .hero {
-          background: url("prototype.png") center / cover no-repeat;
+          background: url("media/prototype.png") center / cover no-repeat;
         }
       </style>
     </noscript>
